@@ -67,6 +67,7 @@ Point* p = new Point{1, 2};
   ```
 <!-- ![alt text](images/poly.png "Title")
 ![alt text](images/comp.png "Title") -->
+
 <p align="center">
   <img src="images/poly.png">
   <br/>
@@ -75,6 +76,7 @@ Point* p = new Point{1, 2};
   <img src="images/comp.png">
   <br/>
 </p>
+
 * "Multi-paradigm" is not good enough
   * The styles/paradigms were never meant to be disjoint
   * C style
@@ -99,18 +101,20 @@ Point* p = new Point{1, 2};
     * C++ core guidelines
 ### Ghastly style
 * `qsort()` example
-  <p align="center">
-    <img src="images/qsort.png">
-    <br/>
-  </p>
-  <p align="center">
-    <img src="images/qsort2.png">
-    <br/>
-  </p>
-  <p align="center">
-    <img src="images/qsort3.png">
-    <br/>
-  </p>
+
+<p align="center">
+  <img src="images/qsort.png">
+  <br/>
+</p>
+<p align="center">
+  <img src="images/qsort2.png">
+  <br/>
+</p>
+<p align="center">
+  <img src="images/qsort3.png">
+  <br/>
+</p>
+
 * We want:
   * simple interfaces
   ```
