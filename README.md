@@ -181,8 +181,110 @@ Point* p = new Point{1, 2};
   * General types can represent just about anything
     * Checking of trivial types finds only trivial errors
     * Use precisely specified interfaces
-### Resource management
 
+## Lecture 2
+### Q's
+* Errors: compile-time and run-time
+  * no runtime checks for compile time errors and no error handling code
+  * in general: C++ moves much work to compile time
+* Overloading (same name for all function) - the compiler selects the correct function to invoke
+  * Or ambiguity compile-time error
+* Union (symbol tables, set aside memory for item) and variants (basic union with a tag)
+* `auto x = 1'234'567;// small things can be important` (compiler already knows what type the object is)
+* Modules - C++20, later 
+* Inlining 
+  * infline function is expanded in line when it is called, performed at compile time
+  * reduce functional call overhead, for small and commonly-used functions
+  * function calling another function, store away registers you are using, go over to the call function, estabilsh local variable, keep track of where it came from, need it for template, optimizer
+* Small objects - better stick to two words
+* `int x = 7.8; // left-over from C (compatibility is important)`
+* Fortran - it still rules large areas of high-performance computing (focused on floating point numbers)
+* There really is no Garbage collector (Don't litter)
+* `double sqrt(double); // an argument name is only needed if you use it`
+
+### Resources and Error
+* Resources
+  * something that must be acquired and released
+    * explicitly or implicitly
+    * examples: memory, locks, file handles, sockets, thread handles
+  ```
+  // unsafe, naive use
+  void f(const char* p) {
+    FILE* f = fopen(p, "r"); // acquire
+    // use f
+    fclose(f); // release (need to make sure it gets to this line)
+  }
+  // naive fix
+  void f(const char* p) {
+    FILE* f = 0;
+    try {
+      f = fopen(p, "r"); // acquire
+      // use f
+    } 
+    catch (...) {
+      fclose(f); // release (need to make sure it gets to this line)
+      throw;
+    }
+    if (f) fclose(f);
+  }
+  ```
+* RAII (Resource Acquisition Is Initialization)
+```
+class File_handle {
+  FILE* p;
+public:
+  File_handle(const char* pp, const char* r) // c style -> c++ abstraction
+      { p = fopen(pp, r); if (p == 0) throw File_error(pp, r); }
+  File_handle(const string& s, const char* r) // c++
+      { p = fopen(s.c_str(), r); if (p == 0) throw File_error(pp, r); }
+  ~File_handle() {fclose(p); } // destructor
+  // copy operations
+  // access functions
+};
+void f(string s) {
+  File_handle fh {s, "r"};
+  // use fh
+}
+```
+* Move
+
+### Resource management
+* resource management should not be manual
+  * we don't want leaks
+* resource should have an owner
+  * usually a "handle" (pointing to Value)
+  * a "handle" should present a well-defined and useful abstraction
+* all the standard-library containers manage their elements
+  * vector
+  * list, forward_list (singly-linked list)
+  * map, unordered_map (hash_table), ...
+  * set, multi_set, ...
+  * string
+* other standard-library classes manage other resources
+  * not just memory
+  * thread, lock_guard, ...
+  * istream, fstream, ...
+  * unique_ptr, shared_ptr
+* use constructors * destructors
+```
+template<typename T> // Vector -> elements
+class Vector { // vector of elements of type T
+  public:
+    Vector(initializer_list<T>); // acquire memory; initialize elements
+    ~Vector(); // destroy elements; release memory
+    //...
+  private: 
+    T* elem; // pointer to elements
+    int sz; // number of elements
+};
+
+void fct() {
+  Vector<double> constants{1, 1.618, 3.14, 2.99e8};
+  Vector<string> designers{"Strachey", "Richards", "Ritchie"};
+  // ...
+  Vector<pair<string, jthread>> vp {{"producer", prod}, {"consumer", cons}};
+}
+```
 ### OOP: Classes & Hierarchies
 
 ### GP: Templates
